@@ -1,0 +1,17 @@
+{
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+  "plugins": ["jsx-a11y"],
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "max-len": ["error", { "code": 120 }],
+    "object-curly-newline": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [ ".js", ".jsx" ] } ],
+    "react/prop-types": [2, { "ignore":  ["className", "children"] }],
+    "react/jsx-props-no-spreading": "off",
+    "react/jsx-one-expression-per-line": "off"
+  }
+}
