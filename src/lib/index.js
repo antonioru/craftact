@@ -1,75 +1,68 @@
-const states = []; // the states array
-let stateCursor = 0; // the states cursor
-let rootComponent = null; // the root component, the first one to be executed
-let mainContainer = null; // the container where the app mounts
+const isChildren = (p) => p !== 'children';
+let rootElement = null;
+let rootComponent = null;
 
-/**
- * Creates a Cratfact virtual DOM element
- */
-const createElement = (type, props, ...children) => {
+export const createElement = (type, props, ...children) => {
   if (typeof type === 'function') {
-    if (!rootComponent) rootComponent = type; // register the first component as the root of the app
+    if (!rootComponent) rootComponent = type;
     return type({ ...props, children });
   }
 
-  return { type, props: { ...props, children } };
+  return Object.freeze({ type, props: { ...props, children } });
 };
 
-/**
- * Convert a virtual DOM element into actual DOM elements
- */
-const mount = (container, craftactEl) => {
-  if (['number', 'string'].includes(typeof craftactEl)) {
-    container.appendChild(document.createTextNode(craftactEl));
+
+export const mount = (container, element) => {
+  if (['number', 'string'].includes(typeof element)) {
+    container.appendChild(document.createTextNode(element));
     return;
   }
+  const actualElement = document.createElement(element.type);
 
-  const actualDOMEl = document.createElement(craftactEl.type);
-
-  // for each element apply attributes
-  if (craftactEl.props) {
-    Object.keys(craftactEl.props).filter((p) => p !== 'children').forEach((p) => actualDOMEl[p] = craftactEl.props[p]);
+  if (element.props) {
+    Object.keys(element.props).filter(isChildren).forEach((prop) => {
+      actualElement[prop] = element.props[prop];
+    });
   }
 
-  // for each children element apply attributes
-  if (craftactEl.props && craftactEl.props.children) {
-    craftactEl.props.children.forEach((child) => mount(actualDOMEl, child));
+  if (element.props && element.props.children) {
+    element.props.children.forEach((child) => mount(actualElement, child));
   }
 
-  container.appendChild(actualDOMEl);
+  container.appendChild(actualElement);
 
-  mainContainer = container;
+  rootElement = container;
 };
 
-/**
- * Re-renders the application
- */
-const hydrate = () => {
-  stateCursor = 0;
-  mainContainer.firstChild.remove();
-  mount(mainContainer, rootComponent());
-};
 
-/**
- * useState hooks
- */
-export const useState = (initialState) => {
-  const CURRENT_CURSOR = stateCursor;
-  states[CURRENT_CURSOR] = states[CURRENT_CURSOR] || initialState;
+const states = [];
+let stateIndex = 0;
 
-  const setState = (nextState) => {
-    states[CURRENT_CURSOR] = nextState;
+export const useState = (initialValue) => {
+  const STATE_POINTER = stateIndex;
+
+  states[STATE_POINTER] = states[STATE_POINTER] || initialValue;
+
+  const setState = (nextValue) => {
+    states[STATE_POINTER] = nextValue;
     hydrate();
   };
 
-  stateCursor += 1;
+  stateIndex += 1;
 
-  return [states[CURRENT_CURSOR], setState];
+  return [states[STATE_POINTER], setState];
 };
 
 
+const hydrate = () => {
+  stateIndex = 0;
+  rootElement.firstChild.remove();
+
+  mount(rootElement, rootComponent());
+};
+
 export default Object.freeze({
   createElement,
-  mount,
   useState,
+  mount,
 });
