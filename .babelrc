@@ -11,7 +11,7 @@
   ],
   "plugins": [
     ["@babel/plugin-transform-react-jsx", {
-      "pragma": "Craftact.createElement",
+      "pragma": "React.createElement",
       "throwIfNamespace": false
     }]
   ]

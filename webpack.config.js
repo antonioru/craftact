@@ -26,7 +26,7 @@ module.exports = (env, argv) => {
       historyApiFallback: true,
       contentBase: outputPath,
       hot: true,
-      port: 3776,
+      port: 3000,
       open: true,
     },
     mode: isProd ? 'production' : 'development',

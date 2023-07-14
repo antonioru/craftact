@@ -1,14 +1,14 @@
-import React, { useState } from './lib';
+import React, { useState } from './lib'
 
 /**
  * My first non-react React component
  */
-const SplendidApplication = () => {
+const App = () => {
   const [name, setName] = useState('MoonPay');
   const [counter, setCounter] = useState(0);
 
   return (
-    <div className="splendid-app">
+    <div className="app">
       <Greeting name={name} />
       <div className="form">
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
@@ -30,4 +30,4 @@ const Counter = ({value}) => (
   </div>
 )
 
-React.mount(window.appRoot, <SplendidApplication />);
+React.mount(window.root, <App />);

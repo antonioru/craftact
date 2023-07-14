@@ -1,4 +1,4 @@
-let rootElement = null;
+let currentHTMLElement = null;
 let rootComponent = null;
 
 export const createElement = (type, props, ...children) => {
@@ -32,7 +32,7 @@ export const mount = (container, element) => {
 
   container.appendChild(actualElement);
 
-  rootElement = container;
+  currentHTMLElement = container;
 };
 
 const isChildren = (p) => p !== 'children';
@@ -63,9 +63,9 @@ export const useState = (initialValue) => {
 
 const hydrate = () => {
   stateIndex = 0;
-  rootElement.firstChild.remove();
+  currentHTMLElement.firstChild.remove();
 
-  mount(rootElement, rootComponent());
+  mount(currentHTMLElement, rootComponent());
 };
 
 export default Object.freeze({
