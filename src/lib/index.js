@@ -1,14 +1,13 @@
-const isChildren = (p) => p !== 'children';
 let rootElement = null;
 let rootComponent = null;
 
 export const createElement = (type, props, ...children) => {
   if (typeof type === 'function') {
     if (!rootComponent) rootComponent = type;
-    return type({ ...props, children });
+    return type({...props, children});
   }
 
-  return Object.freeze({ type, props: { ...props, children } });
+  return Object.freeze({type, props: {...props, children}});
 };
 
 
@@ -21,7 +20,9 @@ export const mount = (container, element) => {
 
   if (element.props) {
     Object.keys(element.props).filter(isChildren).forEach((prop) => {
-      actualElement[prop] = element.props[prop];
+      const attribute = fromPropToAttribute(prop);
+
+      actualElement[attribute] = element.props[prop];
     });
   }
 
@@ -33,6 +34,12 @@ export const mount = (container, element) => {
 
   rootElement = container;
 };
+
+const isChildren = (p) => p !== 'children';
+const fromPropToAttribute = (prop) => {
+  if (prop === 'className') return prop
+  return prop.toLowerCase()
+}
 
 
 const states = [];
